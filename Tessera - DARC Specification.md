@@ -4,7 +4,7 @@ Tessera – Integrated HSM
 
 DARC — Device Authentication Root Certificate
 
-0.1.0
+0.1.1
 
 
 
@@ -39,6 +39,7 @@ Versions and revisions are made to this document and logged here. Errata is a se
 | **Date** | **Version #** | **Author** | **Description** |
 | --- | --- | --- | --- |
 | 09/13/2026 | 0.1.0 | Craig Barner, Chandra Shekhar Reddy, Vishal Soni | Initial DARC architecture, realigned from the legacy LS2/Tiger DARC draft to the Tessera HPKE-Auth transfer model and the implemented `Darc*` command set (opcodes `0x20`–`0x25`). |
+| 11/17/2026 | 0.1.1 | Chandra Shekhar Reddy | Added the key and key type summary for AES, RSA, EC, ML-KEM, and ML-DSA. |
 
 ## Table of Contents
 
@@ -69,6 +70,7 @@ Versions and revisions are made to this document and logged here. Errata is a se
   - [PKCS #11 Attribute Representation](#darc-key-pkcs11)
   - [Supported Attributes](#darc-key-supported-attrs)
   - [Unsupported Attributes](#darc-key-unsupported-attrs)
+  - [Key and Key Type Summary](#darc-key-type-summary)
   - [Key Material and Algorithm Coverage](#darc-key-material)
   - [Identifiers and Labels](#darc-key-identifiers)
   - [Source Attributes and Target Semantics](#darc-key-mapping)
@@ -576,6 +578,22 @@ The following attributes are explicitly excluded from this profile. Native types
 These attributes MUST NOT appear in the attribute array, including as opaque byte strings or vendor aliases. This table is not exhaustive: all standard attributes outside the [supported-attribute allowlist](#darc-key-supported-attrs) are unsupported and MUST be rejected if received.
 
 The exporter MUST reject a source key with an effective restriction that depends on an unsupported attribute, including per-use authentication, template or allowed-mechanism restrictions, or source-policy-enforced dates. An excluded attribute may be omitted only when its native semantics and trusted source policy establish that omission loses no material, effective restriction, or required provenance; a false, empty, or unreadable value MUST NOT automatically be treated as safe to omit. These checks occur before wrapping, not by stripping attributes after serialization.
+
+<a id="darc-key-type-summary"></a>
+
+### Key and Key Type Summary
+
+This profile releases generated keys only. The table names the key type, the generation mechanism, and the material that generation produces. Signature, encryption, and key-agreement mechanisms are outside this summary.
+
+| Key | `CKA_KEY_TYPE` | Class | Generation | Material |
+| --- | --- | --- | --- | --- |
+| AES | `CKK_AES` = `31` (`0x1F`) | Secret | `CKM_AES_KEY_GEN` (`0x1080`) | `CKA_VALUE` of 16, 24, or 32 bytes |
+| RSA | `CKK_RSA` = `0` | Public and private | `CKM_RSA_PKCS_KEY_PAIR_GEN` (`0x0000`) | Modulus and public exponent. The private key also has the private exponent and all five CRT components |
+| EC | `CKK_EC` = `3` | Public and private | `CKM_EC_KEY_PAIR_GEN` (`0x1040`) | `CKA_EC_PARAMS` for P-256, P-384, or P-521. Public point in `CKA_EC_POINT`. Private scalar in `CKA_VALUE` |
+| ML-KEM | `CKK_ML_KEM` = `73` (`0x49`) | Public and private | `CKM_ML_KEM_KEY_PAIR_GEN` (`0x000F`) | `CKA_PARAMETER_SET` and public `CKA_VALUE`. A private key carries `CKA_SEED`, the expanded `CKA_VALUE`, or both |
+| ML-DSA | `CKK_ML_DSA` = `74` (`0x4A`) | Public and private | `CKM_ML_DSA_KEY_PAIR_GEN` (`0x001C`) | `CKA_PARAMETER_SET` and public `CKA_VALUE`. A private key carries `CKA_SEED`, the expanded `CKA_VALUE`, or both |
+
+`CKK_ECDSA` is a deprecated name for `CKK_EC` (`3`). It is not a second wire value.
 
 <a id="darc-key-material"></a>
 
