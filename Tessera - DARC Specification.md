@@ -4,7 +4,7 @@ Tessera – Integrated HSM
 
 DARC — Device Authentication Root Certificate
 
-0.1.3
+0.1.4
 
 
 
@@ -42,6 +42,7 @@ Versions and revisions are made to this document and logged here. Errata is a se
 | 11/17/2026 | 0.1.1 | Chandra Shekhar Reddy | Added the key and key type summary for AES, RSA, EC, ML-KEM, and ML-DSA. |
 | 11/18/2026 | 0.1.2 | Chandra Shekhar Reddy | Replaced the generation column in the key and key type summary with the supported algorithms. |
 | 11/18/2026 | 0.1.3 | Chandra Shekhar Reddy | Limited the key and key type summary to the key types carried in a released key blob. |
+| 11/18/2026 | 0.1.4 | Chandra Shekhar Reddy | Listed the value length of every AES, RSA, EC, ML-KEM, and ML-DSA variant. |
 
 ## Table of Contents
 
@@ -589,11 +590,11 @@ This summary lists the key types a released key blob may carry. Cipher modes, si
 
 | Key | `CKA_KEY_TYPE` | Class | Supported keys | Material |
 | --- | --- | --- | --- | --- |
-| AES | `CKK_AES` = `31` (`0x1F`) | Secret | AES-128, AES-192, AES-256 | `CKA_VALUE` of 16, 24, or 32 bytes |
-| RSA | `CKK_RSA` = `0` | Public and private | RSA-2048, RSA-3072, RSA-4096. Public key, and a CRT private key | Modulus and public exponent. The private key also has the private exponent and all five CRT components |
-| EC | `CKK_EC` = `3` | Public and private | P-256, P-384, P-521 | `CKA_EC_PARAMS` for one of those curves. Public point in `CKA_EC_POINT`. Private scalar in `CKA_VALUE` |
-| ML-KEM | `CKK_ML_KEM` = `73` (`0x49`) | Public and private | ML-KEM-512, ML-KEM-768, ML-KEM-1024 | `CKA_PARAMETER_SET` and public `CKA_VALUE`. A private key carries `CKA_SEED`, the expanded `CKA_VALUE`, or both |
-| ML-DSA | `CKK_ML_DSA` = `74` (`0x4A`) | Public and private | ML-DSA-44, ML-DSA-65, ML-DSA-87 | `CKA_PARAMETER_SET` and public `CKA_VALUE`. A private key carries `CKA_SEED`, the expanded `CKA_VALUE`, or both |
+| AES | `CKK_AES` = `31` (`0x1F`) | Secret | AES-128, AES-192, AES-256 | `CKA_VALUE`: 16, 24, or 32 bytes |
+| RSA | `CKK_RSA` = `0` | Public and private | RSA-2048, RSA-3072, RSA-4096. Public key, and a CRT private key | `CKA_MODULUS`: 256, 384, or 512 bytes. `CKA_PUBLIC_EXPONENT` on every object. Private `CKA_PRIVATE_EXPONENT` matches the modulus width. Each of the five CRT components is 128, 192, or 256 bytes |
+| EC | `CKK_EC` = `3` | Public and private | P-256, P-384, P-521 | `CKA_EC_PARAMS` names the curve. Public `CKA_EC_POINT`: `X` and `Y` are 32, 48, or 66 bytes. Private `CKA_VALUE`: 32, 48, or 66 bytes |
+| ML-KEM | `CKK_ML_KEM` = `73` (`0x49`) | Public and private | ML-KEM-512, ML-KEM-768, ML-KEM-1024 | Public `CKA_VALUE`: 800, 1184, or 1568 bytes. Private `CKA_SEED`: 64 bytes. Expanded private `CKA_VALUE`: 1632, 2400, or 3168 bytes |
+| ML-DSA | `CKK_ML_DSA` = `74` (`0x4A`) | Public and private | ML-DSA-44, ML-DSA-65, ML-DSA-87 | Public `CKA_VALUE`: 1312, 1952, or 2592 bytes. Private `CKA_SEED`: 32 bytes. Expanded private `CKA_VALUE`: 2560, 4032, or 4896 bytes |
 
 `CKK_ECDSA` is a deprecated name for `CKK_EC` (`3`). It is not a second wire value.
 
