@@ -4,7 +4,7 @@ Tessera – Integrated HSM
 
 DARC — Device Authentication Root Certificate
 
-0.1.2
+0.1.3
 
 
 
@@ -41,6 +41,7 @@ Versions and revisions are made to this document and logged here. Errata is a se
 | 09/13/2026 | 0.1.0 | Craig Barner, Chandra Shekhar Reddy, Vishal Soni | Initial DARC architecture, realigned from the legacy LS2/Tiger DARC draft to the Tessera HPKE-Auth transfer model and the implemented `Darc*` command set (opcodes `0x20`–`0x25`). |
 | 11/17/2026 | 0.1.1 | Chandra Shekhar Reddy | Added the key and key type summary for AES, RSA, EC, ML-KEM, and ML-DSA. |
 | 11/18/2026 | 0.1.2 | Chandra Shekhar Reddy | Replaced the generation column in the key and key type summary with the supported algorithms. |
+| 11/18/2026 | 0.1.3 | Chandra Shekhar Reddy | Limited the key and key type summary to the key types carried in a released key blob. |
 
 ## Table of Contents
 
@@ -584,15 +585,15 @@ The exporter MUST reject a source key with an effective restriction that depends
 
 ### Key and Key Type Summary
 
-The table names the key type, the algorithms that key may be used for, and the key material. Mechanism numbers are the PKCS #11 3.2 values.
+This summary lists the key types a released key blob may carry. Cipher modes, signature schemes, and key-agreement mechanisms are outside this table.
 
-| Key | `CKA_KEY_TYPE` | Class | Algorithms | Material |
+| Key | `CKA_KEY_TYPE` | Class | Supported keys | Material |
 | --- | --- | --- | --- | --- |
-| AES | `CKK_AES` = `31` (`0x1F`) | Secret | `CKM_AES_ECB` (`0x1081`), `CKM_AES_CBC` (`0x1082`), `CKM_AES_CBC_PAD` (`0x1085`), `CKM_AES_CTR` (`0x1086`), `CKM_AES_GCM` (`0x1087`), `CKM_AES_CMAC` (`0x108A`), `CKM_AES_KEY_WRAP` (`0x2109`), `CKM_AES_KEY_WRAP_PAD` (`0x210A`) | `CKA_VALUE` of 16, 24, or 32 bytes |
-| RSA | `CKK_RSA` = `0` | Public and private | RSASSA-PKCS1-v1.5 and RSASSA-PSS with SHA-224, SHA-256, SHA-384, and SHA-512; RSAES-OAEP (`CKM_RSA_PKCS_OAEP`, `0x0009`) | Modulus and public exponent. The private key also has the private exponent and all five CRT components |
-| EC | `CKK_EC` = `3` | Public and private | ECDSA with SHA-224, SHA-256, SHA-384, and SHA-512 (`CKM_ECDSA_SHA224` `0x1043`, `CKM_ECDSA_SHA256` `0x1044`, `CKM_ECDSA_SHA384` `0x1045`, `CKM_ECDSA_SHA512` `0x1046`); ECDH (`CKM_ECDH1_DERIVE`, `0x1050`) | `CKA_EC_PARAMS` for P-256, P-384, or P-521. Public point in `CKA_EC_POINT`. Private scalar in `CKA_VALUE` |
-| ML-KEM | `CKK_ML_KEM` = `73` (`0x49`) | Public and private | `CKM_ML_KEM` (`0x0017`) | `CKA_PARAMETER_SET` and public `CKA_VALUE`. A private key carries `CKA_SEED`, the expanded `CKA_VALUE`, or both |
-| ML-DSA | `CKK_ML_DSA` = `74` (`0x4A`) | Public and private | `CKM_ML_DSA` (`0x001D`) | `CKA_PARAMETER_SET` and public `CKA_VALUE`. A private key carries `CKA_SEED`, the expanded `CKA_VALUE`, or both |
+| AES | `CKK_AES` = `31` (`0x1F`) | Secret | AES-128, AES-192, AES-256 | `CKA_VALUE` of 16, 24, or 32 bytes |
+| RSA | `CKK_RSA` = `0` | Public and private | RSA-2048, RSA-3072, RSA-4096. Public key, and a CRT private key | Modulus and public exponent. The private key also has the private exponent and all five CRT components |
+| EC | `CKK_EC` = `3` | Public and private | P-256, P-384, P-521 | `CKA_EC_PARAMS` for one of those curves. Public point in `CKA_EC_POINT`. Private scalar in `CKA_VALUE` |
+| ML-KEM | `CKK_ML_KEM` = `73` (`0x49`) | Public and private | ML-KEM-512, ML-KEM-768, ML-KEM-1024 | `CKA_PARAMETER_SET` and public `CKA_VALUE`. A private key carries `CKA_SEED`, the expanded `CKA_VALUE`, or both |
+| ML-DSA | `CKK_ML_DSA` = `74` (`0x4A`) | Public and private | ML-DSA-44, ML-DSA-65, ML-DSA-87 | `CKA_PARAMETER_SET` and public `CKA_VALUE`. A private key carries `CKA_SEED`, the expanded `CKA_VALUE`, or both |
 
 `CKK_ECDSA` is a deprecated name for `CKK_EC` (`3`). It is not a second wire value.
 
