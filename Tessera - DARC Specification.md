@@ -596,8 +596,6 @@ This summary lists the key types a released key blob may carry. Cipher modes, si
 | ML-KEM | `CKK_ML_KEM` = `73` (`0x49`) | Public and private | ML-KEM-512, ML-KEM-768, ML-KEM-1024 | Public `CKA_VALUE`: 800, 1184, or 1568 bytes. Private `CKA_SEED`: 64 bytes. Expanded private `CKA_VALUE`: 1632, 2400, or 3168 bytes |
 | ML-DSA | `CKK_ML_DSA` = `74` (`0x4A`) | Public and private | ML-DSA-44, ML-DSA-65, ML-DSA-87 | Public `CKA_VALUE`: 1312, 1952, or 2592 bytes. Private `CKA_SEED`: 32 bytes. Expanded private `CKA_VALUE`: 2560, 4032, or 4896 bytes |
 
-`CKK_ECDSA` is a deprecated name for `CKK_EC` (`3`). It is not a second wire value.
-
 <a id="darc-key-material"></a>
 
 ### Key Material and Algorithm Coverage
